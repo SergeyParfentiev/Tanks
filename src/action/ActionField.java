@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 public class ActionField {
 
-    volatile private ConcurrentSkipListSet<Character> pressed = new ConcurrentSkipListSet<>();
+    volatile private ConcurrentSkipListSet<Integer> pressed = new ConcurrentSkipListSet<>();
     private static BattleField battleField;
     private Tank defender;
     private Tank firstAggressor;
@@ -297,19 +297,17 @@ public class ActionField {
 
     private boolean processInterception(Bullet bullet, int bodyX, int bodyY) {
         for(int i = 0; i < bullets.size(); i++) {
-
-                if(bullet != bullets.get(i) && Math.abs(bullet.getX() - bullets.get(i).getX()) < 14 && Math.abs(bullet.getY() - bullets.get(i).getY()) < 14) {
-                    try {
-                        bullet.destroy();
-                        bullets.get(i).destroy();
-                        return true;
-                    } finally {
-                        bullets.get(i).destroy();
-                        bullet.destroy();
-                        return true;
-                    }
+            if(bullet != bullets.get(i) && Math.abs(bullet.getX() - bullets.get(i).getX()) < 14 && Math.abs(bullet.getY() - bullets.get(i).getY()) < 14) {
+                try {
+                    bullet.destroy();
+                    bullets.get(i).destroy();
+                    return true;
+                } finally {
+                    bullets.get(i).destroy();
+                    bullet.destroy();
+                    return true;
                 }
-
+            }
         }
 
         int x = bodyX / battleField.getLimitQuadrant();
@@ -370,23 +368,16 @@ public class ActionField {
         frame.pack();
 
         frame.addKeyListener(new KeyAdapter() {
-
-            @Override
-            public void keyTyped(KeyEvent e) {
-                pressedButtons(e.getKeyChar());
-            }
-
             @Override
             public synchronized void keyPressed(KeyEvent e) {
-                pressed.add(e.getKeyChar());
-
+                pressedButtons(e.getKeyCode());
+                pressed.add(e.getKeyCode());
             }
 
             @Override
             public synchronized void keyReleased(KeyEvent e) {
-                pressed.remove(e.getKeyChar());
+                pressed.remove(e.getKeyCode());
             }
-
         });
     }
 
@@ -400,29 +391,29 @@ public class ActionField {
         }
     }
 
-    private void pressedButtons(Character button) {
-        if(button == 'p') {
+    private void pressedButtons(int button) {
+        if(button == KeyEvent.VK_P) {
             play = !play;
         }
-            if (button == 'a') {
+            if (button == KeyEvent.VK_A) {
                 defender.setPlayerAction(Action.LEFT);
-            } else if (button == 'd') {
+            } else if (button == KeyEvent.VK_D) {
                 defender.setPlayerAction(Action.RIGHT);
-            } else if (button == 'w') {
+            } else if (button == KeyEvent.VK_W) {
                 defender.setPlayerAction(Action.UP);
-            } else if (button == 's') {
+            } else if (button == KeyEvent.VK_S) {
                 defender.setPlayerAction(Action.DOWN);
-            } else if (button == ' ') {
+            } else if (button == KeyEvent.VK_SPACE) {
                 defender.setPlayerAction(Action.FIRE);
-            } else if (button == 'j') {
+            } else if (button == KeyEvent.VK_J) {
                 firstAggressor.setPlayerAction(Action.LEFT);
-            } else if (button == 'l') {
+            } else if (button == KeyEvent.VK_L) {
                 firstAggressor.setPlayerAction(Action.RIGHT);
-            } else if (button == 'i') {
+            } else if (button == KeyEvent.VK_I) {
                 firstAggressor.setPlayerAction(Action.UP);
-            } else if (button == 'k') {
+            } else if (button == KeyEvent.VK_K) {
                 firstAggressor.setPlayerAction(Action.DOWN);
-            } else if (button == 'n') {
+            } else if (button == KeyEvent.VK_N) {
                 firstAggressor.setPlayerAction(Action.FIRE);
             }
     }
@@ -449,7 +440,7 @@ public class ActionField {
                 while (isGameEnd()) {
                     if(pressed.size() > 0) {
                         sleep(200);
-                        for(Character key : pressed) {
+                        for(int key : pressed) {
                             pressedButtons(key);
                         }
                     }
