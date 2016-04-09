@@ -54,7 +54,7 @@ public class ActionField {
     boolean notReplay = true;
     private AbstractObjectOnField eagle;
 
-    private String imageName = "/image/ImageForObjects.png";
+    private String imageName = "/image/ImageForTanks.png";
     private String fileName = "/GameRecord.txt";
 
     private FileOutputStream fos;
@@ -429,6 +429,9 @@ public class ActionField {
                 }
                 drawBullets(g);
                 battleField.drawShrubs(g);
+                if(!play) {
+                    displayPause(g);
+                }
                 sleep(1000 / 60);
             }
         };
@@ -448,6 +451,10 @@ public class ActionField {
             }
         }).start();
         return jGame;
+    }
+
+    private void displayPause(Graphics g) {
+        g.drawImage(image, 3 * 64, 4 * 64 + 9, 3 * 64 + 192, 4 * 64 + 45 + 9, 449, 129, 640, 173, null);
     }
 
     private void actionsFromRecordList() {
